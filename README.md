@@ -1,90 +1,197 @@
-# Instant Mechanic - Live Operations Dashboard
+# Instant Mechanic - Live Vehicle Service Operations Dashboard
 
-**Candidate Name:** Aarti Goyal
-**Live Frontend (Vercel):** [Insert Vercel Link Here]
-**Live Backend API (AWS):** http://13.53.39.15:8000/api/dashboard/
-**Interactive API Docs:** http://13.53.39.15:8000/api/docs/
+**Candidate Name:** Aarti Goyal  
+**Live Frontend (Vercel):** https://frontend-seven-sand-95.vercel.app/  
+**Live Backend API (AWS):** https://13.53.39.15/api/  
+**Interactive API Documentation (Swagger UI):** https://13.53.39.15/api/docs/  
 
-## Project Overview
-This project is a Live Vehicle Service Operations Dashboard built for the operations team at Instant Mechanic. It provides a real-time, comprehensive view of business KPIs, mechanic availability, and customer service requests. The goal was to engineer a production-ready internal tool prioritizing modern UI/UX, robust security, and scalable architecture.
+---
 
-## Tech Stack
-* **Frontend:** Next.js (React), TypeScript, Tailwind CSS, shadcn/ui, Recharts
-* **Backend:** Python, Django REST Framework, SimpleJWT
-* **Database:** SQLite (Configured for easy local testing & evaluation)
-* **Infrastructure:** Docker, Docker Compose, Vercel, AWS EC2
+> 💡 **Note for Evaluators:**  
+> The backend is deployed on AWS EC2 with HTTPS (`https://13.53.39.15/api/`). Because it uses a self-signed SSL certificate:  
+> **Before testing the live Vercel frontend in your browser, please visit [https://13.53.39.15/api/docs/](https://13.53.39.15/api/docs/) once and click "Advanced -> Proceed to 13.53.39.15 (unsafe)" to allow your browser to connect to the live AWS backend.**  
+>  
+> **Demo Credentials:**  
+> - **Username:** `testuser123`  
+> - **Password:** `password123`  
+> *(You can also register a new operations or admin account directly on the dashboard!)*  
 
-## Architecture
+---
+
+## 🚀 Project Overview
+
+This project is a modern, production-grade **Live Vehicle Service Operations Dashboard** engineered for **Instant Mechanic**. It empowers the operations team to monitor business KPIs, track active mechanics, manage customer bookings, and analyze revenue trends in real-time.
+
+The solution is built with a decoupled architecture (Next.js on Vercel, Django REST Framework on AWS EC2, and PostgreSQL in Docker), adhering to production SaaS standards for UI/UX, security, database design, and containerized deployment.
+
+---
+
+## 🛠️ Tech Stack
+
+* **Frontend:** Next.js 16 (App Router), React 19, TypeScript, Tailwind CSS, shadcn/ui, Recharts, Lucide React, NextAuth.js
+* **Backend:** Python 3.12, Django 6, Django REST Framework (DRF), SimpleJWT, drf-spectacular (OpenAPI 3.0)
+* **Database:** PostgreSQL 15 (Containerized with healthchecks)
+* **Infrastructure & Containerization:** Docker, Docker Compose, Nginx (Reverse Proxy + SSL), AWS EC2, Vercel
+
+---
+
+## 🏗️ Architecture
+
 The application follows a decoupled microservices architecture:
-1. **Frontend (Client):** A Next.js application that handles UI rendering, state management, and JWT-based authentication via NextAuth.
-2. **API Gateway/Routing:** RESTful communication over HTTP, with global `IsAuthenticated` locks on protected routes.
-3. **Backend (Server):** Django REST Framework processes business logic, handles complex database aggregations for the analytics, and auto-generates OpenAPI documentation.
-4. **Database:** Relational data storage utilizing Django's ORM for efficient querying of bookings, customers, and mechanics.
 
-## Local Setup
+```
+┌───────────────────────────────┐
+│     Next.js Frontend          │  (Vercel - Serverless Deployment)
+│  (NextAuth, Tailwind, UI)     │
+└──────────────┬────────────────┘
+               │
+               │ HTTPS / JSON REST APIs
+               ▼
+┌───────────────────────────────┐
+│       Nginx Reverse Proxy     │  (AWS EC2 Container)
+└──────────────┬────────────────┘
+               │
+               ▼
+┌───────────────────────────────┐
+│   Django REST Framework API   │  (AWS EC2 Container - Gunicorn/Django)
+└──────────────┬────────────────┘
+               │
+               │ PostgreSQL Protocol (Port 5432)
+               ▼
+┌───────────────────────────────┐
+│     PostgreSQL Database       │  (AWS EC2 Container - Persistent Volume)
+└───────────────────────────────┘
+```
 
-### Option 1: Using Docker (Recommended)
-Make sure Docker Desktop is installed and running.
-1. Clone the repository: `git clone <your-repo-link>`
-2. Navigate to the root directory.
-3. Run the application: 
+1. **Frontend (Client/Vercel):** A Next.js App Router application providing a responsive operations dashboard. Features real-time metric cards, interactive charts, sortable/filterable booking tables, and seamless registration/login flows.
+2. **Backend (API/AWS EC2):** Django REST Framework serving clean, optimized REST endpoints with SimpleJWT authentication and OpenAPI swagger documentation.
+3. **Database (PostgreSQL/AWS EC2):** PostgreSQL database storing relational models for Customers, Mechanics, and Bookings with 500+ realistic seeded records.
+
+---
+
+## 💻 Local Setup Instructions
+
+### Option 1: Quick Start with Docker (Recommended)
+
+1. **Clone the repository:**
    ```bash
-   docker-compose up --build
+   git clone https://github.com/AartiGoyal16/vehicleServiceDashboard.git
+   cd vehicleServiceDashboard
    ```
-4. While the server is running, open a new terminal window to seed the database with 500+ realistic records:
+
+2. **Start the application with Docker Compose:**
    ```bash
+   docker-compose up -d --build
+   ```
+
+3. **Run database migrations and seed 500+ realistic records:**
+   ```bash
+   docker-compose exec backend python manage.py migrate
    docker-compose exec backend python seed.py
    ```
-5. Access the live dashboard at `http://localhost:3000` and the API docs at `http://localhost:8000/api/docs/`.
+
+4. **Access the application locally:**
+   * **Frontend Dashboard:** `http://localhost:3000`
+   * **Backend API Root:** `http://localhost:8000/api/`
+   * **Swagger API Docs:** `http://localhost:8000/api/docs/`
+
+---
 
 ### Option 2: Manual Setup
-**Backend:**
-1. Navigate to the backend directory: `cd backend`
-2. Create a virtual environment: `python -m venv venv`
-3. Activate the environment: `source venv/bin/activate` (Mac/Linux) or `.\venv\Scripts\activate` (Windows)
-4. Install dependencies: `pip install -r requirements.txt`
-5. Run migrations: `python manage.py migrate`
-6. Seed the database: `python seed.py`
-7. Start the server: `python manage.py runserver`
 
-**Frontend:**
-1. Navigate to the frontend directory: `cd frontend`
-2. Install dependencies: `npm install`
-3. Start the development server: `npm run dev`
+#### Backend Setup:
+```bash
+cd backend
+python -m venv venv
+# On Windows:
+.\venv\Scripts\activate
+# On Mac/Linux:
+source venv/bin/activate
 
-## Environment Variables
-If running manually without Docker, create `.env` files in their respective directories.
-
-**Frontend (`frontend/.env`):**
-```text
-NEXT_PUBLIC_API_URL=[http://127.0.0.1:8000](http://127.0.0.1:8000)
-NEXTAUTH_SECRET=your_super_secret_key
-NEXTAUTH_URL=http://localhost:3000
+pip install -r requirements.txt
+python manage.py migrate
+python seed.py
+python manage.py runserver 0.0.0.0:8000
 ```
 
-**Backend (`backend/.env`):**
-```text
+#### Frontend Setup:
+```bash
+cd frontend
+npm install
+npm run dev
+```
+
+---
+
+## 🔑 Environment Variables
+
+### Root / Docker Compose (`.env`):
+```env
+DB_NAME=vehicleservice
+DB_USER=postgres
+DB_PASSWORD=AartiGoyal
+DB_HOST=db
+DB_PORT=5432
+SECRET_KEY=django-insecure-prod-key
 DEBUG=True
-SECRET_KEY=django_secret_key
+ALLOWED_HOSTS=*
+NEXT_PUBLIC_API_URL=https://13.53.39.15
+API_URL=https://13.53.39.15
+NEXTAUTH_URL=http://localhost:3000
+NEXTAUTH_SECRET=my_super_secret_development_key_123
 ```
 
-## API Documentation
-The backend utilizes `drf-spectacular` to automatically generate Swagger OpenAPI documentation. Once the backend server is running, navigate to `/api/docs/` to interactively view and test all endpoints.
+### Frontend (`frontend/.env.local`):
+```env
+NEXT_PUBLIC_API_URL=https://13.53.39.15
+API_URL=https://13.53.39.15
+NEXTAUTH_URL=http://localhost:3000
+NEXTAUTH_SECRET=my_super_secret_development_key_123
+```
 
-**Major Endpoints:**
+---
+
+## 📚 API Documentation
+
+Interactive Swagger documentation is auto-generated via `drf-spectacular` at `/api/docs/`.
+
+### Key Endpoints:
+
 * `POST /api/register/` - Create a new operations/admin account.
-* `POST /api/token/` - Obtain JWT access and refresh tokens.
-* `GET /api/dashboard/` - Returns pre-calculated aggregations for the 8 core KPIs, formatted chart data arrays, and current mechanics status.
-* `GET /api/bookings/` - Returns paginated, sortable, and filterable booking records.
+* `POST /api/token/` - Obtain JWT access token & refresh token.
+* `GET /api/dashboard/` - Returns overview KPI metrics, formatted chart time-series data, and active mechanics status.
+* `GET /api/bookings/` - Returns paginated, searchable, sortable, and filterable booking records.
+* `GET /api/bookings/:id/` - Detailed view of a single booking.
+* `GET /api/mechanics/` - List of all mechanics and their current job assignments.
+* `GET /api/customers/` - List of registered customers.
 
-## Deployment
-* **Frontend:** Deployed as a serverless Next.js application on Vercel with environment variables linked to the live backend URL.
-* **Backend:** Containerized using Docker and deployed to an AWS EC2 Free Tier instance.
+---
 
-## AI Usage
-AI tools were utilized as an engineering multiplier throughout this project:
-* **Gemini:** Served as a pair-programming assistant to help scaffold the initial Django REST Framework ViewSets, configure the JWT authentication pipeline, resolve strict TypeScript compiler issues, and write the Python script to seed the database with realistic test data.
-* **Personal Implementation:** I took full ownership of the system architecture, designing the relational database models, implementing the custom React hooks for state management, formatting the API response structures to minimize frontend processing load, and heavily fine-tuning the shadcn/ui and Recharts components to achieve a highly polished, responsive user experience.
+## ☁️ Deployment Details
 
-## What I am Most Proud Of
-I am particularly proud of the data pipeline between the Django backend and the Next.js frontend. Instead of sending raw database rows and forcing the client browser to calculate metrics, the backend efficiently uses Django ORM aggregations (`Sum`, `Count`) to calculate the KPIs and format the time-series data. This significantly reduces the API payload size and ensures the dashboard remains incredibly fast and responsive, even when analyzing thousands of records. Containerizing the entire full-stack application with Docker for seamless deployment was also a highly rewarding engineering milestone.
+* **Frontend:** Deployed to **Vercel** with Next.js App Router, environment variables, and automatic GitHub CI/CD integration.
+* **Backend & Database:** Deployed on **AWS EC2 (Ubuntu)** using **Docker & Docker Compose** running Nginx, Django (Gunicorn), and PostgreSQL containers behind an SSL proxy.
+
+---
+
+## 🤖 AI Usage Disclosure
+
+AI tools were used strategically as an engineering multiplier:
+
+* **AI Tools Used:** Antigravity / Gemini / Claude
+* **What AI was used for:**
+  - Generating initial Django REST Framework ViewSets and serializers.
+  - Formulating the database seeding script (`seed.py`) to generate 500+ realistic vehicle service bookings, customer names, mechanic profiles, and status progressions.
+  - Designing responsive Tailwind CSS layout cards and Recharts analytics components.
+  - Writing Docker Compose environment mapping configurations.
+* **Personal Implementation & Modification:**
+  - Designed the overall microservices architecture (Vercel frontend + AWS EC2 PostgreSQL/Django backend).
+  - Architected the NextAuth credentials provider to bridge Next.js sessions with Django SimpleJWT tokens.
+  - Configured CORS, allowed origins, and self-signed TLS handling for cross-domain requests.
+  - Optimized Django ORM aggregations (`Sum`, `Count`) in `dashboard_stats` to minimize client payload sizes.
+
+---
+
+## ⭐ What I Am Most Proud Of
+
+I am particularly proud of the **end-to-end production architecture**. Migrating the application from local SQLite to a containerized **PostgreSQL** database on AWS EC2 while maintaining real-time communication with the Next.js frontend on Vercel presented real engineering challenges (CORS, SSL certificate verification in serverless functions, environment sync). Resolving these to deliver a smooth, high-performance operations dashboard that handles 500+ records seamlessly was an extremely rewarding engineering accomplishment.
