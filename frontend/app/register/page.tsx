@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
+import { signIn } from "next-auth/react";
 import { Wrench, Loader2 } from "lucide-react";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
@@ -35,7 +36,19 @@ export default function RegisterPage() {
 
       if (res.ok) {
         setSuccess(true);
-        setTimeout(() => router.push("/login"), 2000);
+        // Automatically sign in the new user and redirect directly to dashboard
+        const loginRes = await signIn("credentials", {
+          username: formData.username,
+          password: formData.password,
+          redirect: false,
+        });
+
+        if (loginRes?.ok) {
+          router.push("/");
+          router.refresh();
+        } else {
+          setTimeout(() => router.push("/login"), 1500);
+        }
       } else {
         const data = await res.json();
         // Extract the first error message from Django's response
