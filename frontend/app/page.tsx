@@ -11,6 +11,7 @@ import MechanicsTable from "./components/MechanicsTable";
 import { ThemeToggle } from "./components/ThemeToggle";
 import { useSession, signOut } from "next-auth/react";
 import { Button } from "@/components/ui/button"; 
+import { API_BASE_URL } from "@/lib/api";
 
 export default function Dashboard() {
   const { data: session } = useSession();
@@ -40,7 +41,7 @@ export default function Dashboard() {
 
     try {
       // 1. Fetch Dashboard Stats, Charts, & Mechanics
-      const statsRes = await fetch("http://127.0.0.1:8000/api/dashboard/", { headers });
+      const statsRes = await fetch(`${API_BASE_URL}/dashboard/`, { headers });
       if (statsRes.ok) {
         const statsData = await statsRes.json();
         setStats(statsData.overview);
@@ -55,7 +56,7 @@ export default function Dashboard() {
       queryParams.append("page", page.toString());
       queryParams.append("ordering", ordering);
       
-      const url = `http://127.0.0.1:8000/api/bookings/?${queryParams.toString()}`;
+      const url = `${API_BASE_URL}/bookings/?${queryParams.toString()}`;
       const bookingsRes = await fetch(url, { headers });
       
       if (bookingsRes.ok) {

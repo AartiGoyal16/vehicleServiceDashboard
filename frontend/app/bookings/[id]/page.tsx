@@ -8,6 +8,7 @@ import { ArrowLeft, User, Car, Wrench, Calendar, CreditCard } from "lucide-react
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
+import { API_BASE_URL } from "@/lib/api";
 
 export default function BookingDetail() {
   const params = useParams();
@@ -18,7 +19,7 @@ export default function BookingDetail() {
   useEffect(() => {
     const fetchBookingDetails = async () => {
       try {
-        const res = await fetch(`http://127.0.0.1:8000/api/bookings/${params.id}/`);
+        const res = await fetch(`${API_BASE_URL}/bookings/${params.id}/`);
         if (!res.ok) throw new Error("Failed to fetch booking");
         const data = await res.json();
         setBooking(data);

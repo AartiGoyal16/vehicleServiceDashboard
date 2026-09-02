@@ -1,6 +1,16 @@
 version: '3.8'
 
 services:
+  db:
+    image: postgres:15-alpine
+    environment:
+      - POSTGRES_DB=vehicleservice
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=postgres
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    restart: always
+
   backend:
     build: ./backend
     ports:
@@ -9,6 +19,8 @@ services:
       - ./backend:/app
     environment:
       - DEBUG=True
+    depends_on:
+      - db
     restart: always
 
   frontend:
@@ -20,7 +32,10 @@ services:
       - /app/node_modules
       - /app/.next
     environment:
-      - NEXT_PUBLIC_API_URL=http://localhost:8000
+      - NEXT_PUBLIC_API_URL=http://13.53.39.15:8000
     depends_on:
       - backend
     restart: always
+
+volumes:
+  postgres_data:
