@@ -17,15 +17,16 @@ from pathlib import Path
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
-# Load environment variables from backend/.env if present
-env_file = BASE_DIR / '.env'
-if env_file.exists():
-    with open(env_file, 'r') as f:
-        for line in f:
-            line = line.strip()
-            if line and not line.startswith('#') and '=' in line:
-                key, val = line.split('=', 1)
-                os.environ.setdefault(key.strip(), val.strip().strip("'\""))
+# Load environment variables from backend/.env or root .env if present
+env_files = [BASE_DIR / '.env', BASE_DIR.parent / '.env']
+for ef in env_files:
+    if ef.exists():
+        with open(ef, 'r') as f:
+            for line in f:
+                line = line.strip()
+                if line and not line.startswith('#') and '=' in line:
+                    key, val = line.split('=', 1)
+                    os.environ.setdefault(key.strip(), val.strip().strip("'\""))
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/6.1/howto/deployment/checklist/
@@ -107,13 +108,15 @@ else:
     DATABASES = {
         "default": {
             "ENGINE": "django.db.backends.postgresql",
-            "NAME": os.environ.get("DB_NAME"),
-            "USER": os.environ.get("DB_USER"),
-            "PASSWORD": os.environ.get("DB_PASSWORD"),
-            "HOST": os.environ.get("DB_HOST", "localhost"),
+            "NAME": os.environ.get("DB_NAME", "vehicleservice"),
+            "USER": os.environ.get("DB_USER", "postgres"),
+            "PASSWORD": os.environ.get("DB_PASSWORD", "postgres"),
+            "HOST": os.environ.get("DB_HOST", "db"),
             "PORT": os.environ.get("DB_PORT", "5432"),
         }
     }
+
+DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 
 # Password validation

@@ -1,9 +1,15 @@
+# Environment files (Never commit secrets to GitHub!)
+.env
+.env.*
+*.env
+.env*.local
+
 # Node & Next.js
 node_modules/
 .next/
 out/
 build/
-.env*.local
+.vercel/
 
 # Python & Django
 __pycache__/
@@ -11,11 +17,12 @@ __pycache__/
 *$py.class
 venv/
 env/
-.env
+*.venv
 
-# Database (Evaluators will run your seed script instead)
+# Database
+*.sqlite3
 db.sqlite3
 
-# OS Files
+# OS & System Files
 .DS_Store
 Thumbs.db

@@ -3,12 +3,21 @@ version: '3.8'
 services:
   db:
     image: postgres:15-alpine
+    env_file:
+      - .env
     environment:
-      - POSTGRES_DB=vehicleservice
-      - POSTGRES_USER=postgres
-      - POSTGRES_PASSWORD=postgres
+      - POSTGRES_DB=${DB_NAME:-vehicleservice}
+      - POSTGRES_USER=${DB_USER:-postgres}
+      - POSTGRES_PASSWORD=${DB_PASSWORD:-postgres}
+    ports:
+      - "5432:5432"
     volumes:
       - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U $${POSTGRES_USER:-postgres} -d $${POSTGRES_DB:-vehicleservice}"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
     restart: always
 
   backend:
@@ -17,10 +26,19 @@ services:
       - "8000:8000"
     volumes:
       - ./backend:/app
+    env_file:
+      - .env
     environment:
-      - DEBUG=True
+      - DEBUG=${DEBUG:-True}
+      - DB_NAME=${DB_NAME:-vehicleservice}
+      - DB_USER=${DB_USER:-postgres}
+      - DB_PASSWORD=${DB_PASSWORD:-postgres}
+      - DB_HOST=${DB_HOST:-db}
+      - DB_PORT=${DB_PORT:-5432}
+      - SECRET_KEY=${SECRET_KEY}
     depends_on:
-      - db
+      db:
+        condition: service_healthy
     restart: always
 
   frontend:
@@ -31,8 +49,10 @@ services:
       - ./frontend:/app
       - /app/node_modules
       - /app/.next
+    env_file:
+      - .env
     environment:
-      - NEXT_PUBLIC_API_URL=http://13.53.39.15:8000
+      - NEXT_PUBLIC_API_URL=${NEXT_PUBLIC_API_URL:-http://13.53.39.15:8000}
     depends_on:
       - backend
     restart: always
