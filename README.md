@@ -2,8 +2,8 @@
 
 **Candidate Name:** Aarti Goyal
 **Live Frontend (Vercel):** [Insert Vercel Link Here]
-**Live Backend API (AWS):** [Insert AWS Link Here]
-**Interactive API Docs:** [Insert AWS Link Here]/api/docs/
+**Live Backend API (AWS):** http://13.53.39.15:8000/api/dashboard/
+**Interactive API Docs:** http://13.53.39.15:8000/api/docs/
 
 ## Project Overview
 This project is a Live Vehicle Service Operations Dashboard built for the operations team at Instant Mechanic. It provides a real-time, comprehensive view of business KPIs, mechanic availability, and customer service requests. The goal was to engineer a production-ready internal tool prioritizing modern UI/UX, robust security, and scalable architecture.
