@@ -1,0 +1,21 @@
+# Node & Next.js
+node_modules/
+.next/
+out/
+build/
+.env*.local
+
+# Python & Django
+__pycache__/
+*.py[cod]
+*$py.class
+venv/
+env/
+.env
+
+# Database (Evaluators will run your seed script instead)
+db.sqlite3
+
+# OS Files
+.DS_Store
+Thumbs.db
