@@ -125,20 +125,22 @@ npm run dev
 
 ## 🔑 Environment Variables
 
-### Root / Docker Compose (`.env`):
+To run the application locally or in production, create a `.env` file based on the template below:
+
+### Root / Docker Compose (`.env.example`):
 ```env
 DB_NAME=vehicleservice
 DB_USER=postgres
-DB_PASSWORD=AartiGoyal
+DB_PASSWORD=your_secure_db_password
 DB_HOST=db
 DB_PORT=5432
-SECRET_KEY=django-insecure-prod-key
+SECRET_KEY=your_django_secret_key_here
 DEBUG=True
 ALLOWED_HOSTS=*
 NEXT_PUBLIC_API_URL=https://13.53.39.15
 API_URL=https://13.53.39.15
 NEXTAUTH_URL=http://localhost:3000
-NEXTAUTH_SECRET=my_super_secret_development_key_123
+NEXTAUTH_SECRET=your_nextauth_secret_here
 ```
 
 ### Frontend (`frontend/.env.local`):
@@ -146,7 +148,7 @@ NEXTAUTH_SECRET=my_super_secret_development_key_123
 NEXT_PUBLIC_API_URL=https://13.53.39.15
 API_URL=https://13.53.39.15
 NEXTAUTH_URL=http://localhost:3000
-NEXTAUTH_SECRET=my_super_secret_development_key_123
+NEXTAUTH_SECRET=your_nextauth_secret_here
 ```
 
 ---
