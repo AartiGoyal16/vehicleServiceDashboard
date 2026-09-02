@@ -1,5 +1,6 @@
-export const dynamic = "force-dynamic";
 "use client";
+
+export const dynamic = "force-dynamic";
 
 import { useEffect, useState } from "react";
 import { IndianRupee, CalendarDays, Wrench, Users, Activity, CheckCircle, Clock, XCircle, LogOut } from "lucide-react";
