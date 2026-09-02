@@ -1,7 +1,7 @@
 from rest_framework import viewsets, filters, generics
-from rest_framework.decorators import api_view
+from rest_framework.decorators import api_view, permission_classes
 from rest_framework.response import Response
-from rest_framework.permissions import AllowAny
+from rest_framework.permissions import AllowAny, IsAuthenticatedOrReadOnly
 from django.db.models import Sum, Count
 from django.utils import timezone
 from django.contrib.auth.models import User
@@ -22,14 +22,17 @@ class RegisterView(generics.CreateAPIView):
 class CustomerViewSet(viewsets.ModelViewSet):
     queryset = Customer.objects.all()
     serializer_class = CustomerSerializer
+    permission_classes = [IsAuthenticatedOrReadOnly]
 
 class MechanicViewSet(viewsets.ModelViewSet):
     queryset = Mechanic.objects.all()
     serializer_class = MechanicSerializer
+    permission_classes = [IsAuthenticatedOrReadOnly]
 
 class BookingViewSet(viewsets.ModelViewSet):
     queryset = Booking.objects.all().order_by('-created_at')
     serializer_class = BookingSerializer
+    permission_classes = [IsAuthenticatedOrReadOnly]
     
     filter_backends = [filters.SearchFilter, filters.OrderingFilter]
     search_fields = ['vehicle', 'service', 'customer__name', 'mechanic__name']
@@ -46,6 +49,7 @@ class BookingViewSet(viewsets.ModelViewSet):
 # --- Dashboard API ---
 
 @api_view(['GET'])
+@permission_classes([AllowAny])
 def dashboard_stats(request):
     today = timezone.now().date()
     seven_days_ago = today - timedelta(days=7)
